@@ -34,7 +34,7 @@ class PGAgent:
         # print("Choose_action : " ,np.array([state[0,0],state[1,0],state[2,0]]))
         # print("Choose_action : " ,np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
         prob = self.P(np.array([[scaled_state[0,0], scaled_state[1, 0], scaled_state[2, 0]]]))
-        print("Prob : ", prob)
+        #print("Prob : ", prob)
         dist = tfp.distributions.Categorical(probs=prob,dtype=tf.float32)
         action = dist.sample()
         self.action_memory.append(action)
@@ -90,7 +90,7 @@ class PGAgent:
             cumulative_reward = 0
             while not self.env.done:
                 action_index = self.choose_action_training(state)
-                print("action_index : ",action_index)
+                #print("action_index : ",action_index)
                 action = self.env.tj_list[action_index]
                 # executing action, observing reward and next state to store experience in tuple
                 next_state, reward, done, info = self.env.step(action)
@@ -102,6 +102,6 @@ class PGAgent:
                 state = next_state
             self.update_p_weights()
             if episode_index % 10000 == 0: self.P.save(f"P_{episode_index}.h5")
-            if episode_index % 100 == 0: print(f"[episodes]: {episode_index}")
+            if episode_index % 1 == 0: print(f"[episodes]: {episode_index}")
             episode_versus_reward[episode_index] = np.array([episode_index, cumulative_reward])
         return episode_versus_reward
