@@ -28,15 +28,25 @@ class PGAgent:
     
     
     def choose_action_training(self,state):
-        prob = self.P(np.array([[state[0,0], state[1, 0], state[2, 0]]]))
+        scaled_state = state.copy()
+        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
+        scaled_state[2,0] = (scaled_state[2,0])*80
+        # print("Choose_action : " ,np.array([state[0,0],state[1,0],state[2,0]]))
+        # print("Choose_action : " ,np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
+        prob = self.P(np.array([[scaled_state[0,0], scaled_state[1, 0], scaled_state[2, 0]]]))
+        print("Prob : ", prob)
         dist = tfp.distributions.Categorical(probs=prob,dtype=tf.float32)
         action = dist.sample()
         self.action_memory.append(action)
-        # print(action)
+        #print(action)
         return int(action.numpy())
     
     def choose_action(self, state):
-        action_index = tf.argmax(self.P(tf.reshape(state, (1, -1)))[0])
+        scaled_state = state.copy()
+        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
+        scaled_state[2,0] = (scaled_state[2,0])*80
+        #print("Choose_action : " ,np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
+        action_index = tf.argmax(self.P(tf.reshape(scaled_state, (1, -1)))[0])
         return self.env.tj_list[action_index]
     
     
@@ -57,7 +67,11 @@ class PGAgent:
             
         for state,action,returns in zip(self.state_memory,self.action_memory,discnt_rewards):
             with tf.GradientTape() as tape:
-                prob = self.P(np.reshape(state, (1, -1)))
+                scaled_state = state.copy()
+                scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
+                scaled_state[2,0] = (scaled_state[2,0])*80
+                # print("Update_weights : ",np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
+                prob = self.P(np.reshape(scaled_state, (1, -1)))
                 loss = self.calc_loss(prob,action,returns)
                 grads = tape.gradient(loss,self.P.trainable_variables)
                 self.opt.apply_gradients(zip(grads,self.P.trainable_variables))
@@ -76,6 +90,7 @@ class PGAgent:
             cumulative_reward = 0
             while not self.env.done:
                 action_index = self.choose_action_training(state)
+                print("action_index : ",action_index)
                 action = self.env.tj_list[action_index]
                 # executing action, observing reward and next state to store experience in tuple
                 next_state, reward, done, info = self.env.step(action)

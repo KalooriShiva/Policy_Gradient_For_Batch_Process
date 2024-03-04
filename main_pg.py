@@ -14,7 +14,7 @@ if __name__ == "__main__":
     #agent.P = tf.keras.models.load_model(r"C:\Users\Dr Nabil\Downloads\Policy gradient\Pg_final\P_network.h5")
     env.testing = True
     start_time = time.perf_counter()
-    episode_versus_reward = agent.train(100000)
+    episode_versus_reward = agent.train(100)
     cpu_time = time.perf_counter() - start_time
     agent.P.save("P_network.h5")
     state_arr = np.zeros_like(env.time_list)
@@ -33,8 +33,9 @@ if __name__ == "__main__":
         reward_arr[i] = reward
         state = next_state
     df = pd.DataFrame({"Temperature": state_arr, "Time": env.time_list, "Reference": env.Tref, "Jacket Temperature": action_arr, "Concentration [A]": conc_arr, "Reward": reward_arr})
-    df.to_excel("PG.xlsx")
+#    df.to_excel("PG.xlsx")
     sns.set_theme()
+    plt.figure(1)
     sns.lineplot(
         data=df,
         x="Time",
@@ -48,7 +49,7 @@ if __name__ == "__main__":
         legend="full",
         label="Reference Temperature",
     )
-    plt.show()
+    plt.figure(2)
     sns.lineplot(
         data=df,
         x="Time",
@@ -56,19 +57,20 @@ if __name__ == "__main__":
         legend="full",
         label="Action",
     )
-    plt.show()
+    
     # concentration plot
+    plt.figure(3)
     sns.lineplot(data=df, x="Time", y="Concentration [A]")
-    plt.show()
     window_size = 100
     rolling_avg = pd.Series(episode_versus_reward[:,1]).rolling(window=window_size, min_periods=1).mean()
     data = pd.DataFrame({'Episode': range(1, episode_versus_reward.shape[0] + 1),
                          'Reward':episode_versus_reward[:,1] ,
                          'Rolling Average': rolling_avg})
+    plt.figure(4)
     sns.set_style("darkgrid")
     sns.lineplot(data=data, x='Episode', y = 'Reward', label='Episode Reward', color='blue')
     sns.lineplot(data=data, x='Episode', y = 'Rolling Average', label='Rolling Average', color='red')
-    # sns.lineplot(episode_vs_reward_df, x="Episodes", y="Reward")
+    #sns.lineplot(episode_vs_reward_df, x="Episodes", y="Reward")
     plt.show()
     # control signal plot
     # sns.lineplot(x=env.time_list, y=action_arr, drawstyle='steps-pre', label="Jacket Temperature")
