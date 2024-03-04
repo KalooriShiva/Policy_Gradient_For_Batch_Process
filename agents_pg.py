@@ -29,7 +29,7 @@ class PGAgent:
     
     def choose_action_training(self,state):
         scaled_state = state.copy()
-        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_temp)*(80/(self.env.max_temp-self.env.min_temp))
+        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
         scaled_state[2,0] = (scaled_state[2,0])*80
         # print("Choose_action : " ,np.array([state[0,0],state[1,0],state[2,0]]))
         # print("Choose_action : " ,np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
@@ -43,7 +43,7 @@ class PGAgent:
     
     def choose_action(self, state):
         scaled_state = state.copy()
-        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_temp)*(80/(self.env.max_temp-self.env.min_temp))
+        scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
         scaled_state[2,0] = (scaled_state[2,0])*80
         #print("Choose_action : " ,np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
         action_index = tf.argmax(self.P(tf.reshape(scaled_state, (1, -1)))[0])
@@ -68,7 +68,7 @@ class PGAgent:
         for state,action,returns in zip(self.state_memory,self.action_memory,discnt_rewards):
             with tf.GradientTape() as tape:
                 scaled_state = state.copy()
-                scaled_state[1,0] = (scaled_state[1,0] - self.env.min_temp)*(80/(self.env.max_temp-self.env.min_temp))
+                scaled_state[1,0] = (scaled_state[1,0] - self.env.min_j_temp)*(80/(self.env.max_j_temp-self.env.min_j_temp))
                 scaled_state[2,0] = (scaled_state[2,0])*80
                 # print("Update_weights : ",np.array([scaled_state[0,0],scaled_state[1,0],scaled_state[2,0]]))
                 prob = self.P(np.reshape(scaled_state, (1, -1)))
