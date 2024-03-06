@@ -10,14 +10,14 @@ import time
     
 if __name__ == "__main__":
     env = Environment(timesteps=40, num_j_temp=40)
-    agent = PGAgent(learning_rate=1e-6, decay_rate=1e-7, environment=env, nn_arch=[400, 300, 200])
+    agent = PGAgent(learning_rate=1e-7, decay_rate=1e-6, environment=env, nn_arch=[400, 300, 200])
     #agent.P = tf.keras.models.load_model(r"C:\Users\Dr Nabil\Downloads\Policy gradient\Pg_final\P_network.h5")
     env.testing = True
     start_time = time.perf_counter()
     episode_versus_reward = agent.train(1000)
     cpu_time = time.perf_counter() - start_time
     agent.P.save("P_network.h5")
-    state_arr = np.zeros_like(env.time_list)
+    state_arr = np.zeros_like(env.time_list) 
     conc_arr = np.zeros_like(env.time_list)
     action_arr = np.zeros_like(env.time_list)
     reward_arr = np.zeros_like(env.time_list)
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     for i in range(env.n_tf):
         state_arr[i] = state[env.T, 0]
         conc_arr[i] = state[env.Ca, 0]
-        action_arr[i] = agent.choose_action(state)
+        action_arr[i] = env.tj_list[agent.choose_action(state)]
         #reward_computation
         next_state, reward, done, info = env.step(action_arr[i])
         reward_arr[i] = reward
