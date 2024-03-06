@@ -10,7 +10,7 @@ import time
     
 if __name__ == "__main__":
     env = Environment(timesteps=40, num_j_temp=40)
-    agent = PGAgent(learning_rate=1e-7, decay_rate=1e-6, environment=env, nn_arch=[400, 300, 200])
+    agent = PGAgent(learning_rate=1e-6, decay_rate=1e-7, environment=env, nn_arch=[400, 300, 200])
     #agent.P = tf.keras.models.load_model(r"C:\Users\Dr Nabil\Downloads\Policy gradient\Pg_final\P_network.h5")
     env.testing = True
     start_time = time.perf_counter()

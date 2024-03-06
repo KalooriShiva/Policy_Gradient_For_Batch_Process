@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 class PGAgent:
     
-    def __init__(self, environment, learning_rate=1e-6, decay_rate=1e-7, discount_factor=0.98, epsilon=0.05,  nn_arch=[400, 300, 200]):
+    def __init__(self, environment, learning_rate, decay_rate, discount_factor=0.95, epsilon=0.05,  nn_arch=[400, 300, 200]):
         self.env = environment
         self.discount_factor = discount_factor
         self.epsilon = epsilon
@@ -45,6 +45,7 @@ class PGAgent:
         if np.random.uniform() > self.epsilon: action_index = self.choose_action(state)
         else: action_index = np.random.randint(self.env.num_j_temp)
         self.action_memory.append(tf.constant(action_index))
+        
         # print("Prob array ",self.P(np.reshape(scaled_state, (1, -1)))[0],"Action ",action_index)
         return action_index
     # def choose_action_training(self,state):
