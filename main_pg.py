@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 from reactor_environments import Environment
 from agents_pg import PGAgent
+from agents_pg import PolicyGradientAgent
 # import tensorflow as tf
 import matplotlib.pyplot as plt
 import time
@@ -10,11 +11,12 @@ import time
     
 if __name__ == "__main__":
     env = Environment(timesteps=40, num_j_temp=40)
-    agent = PGAgent(learning_rate=1e-6, decay_rate=1e-7, environment=env, nn_arch=[400, 300, 200])
+    agent = PGAgent(learning_rate=1e-7, decay_rate= 1e-8, environment=env, nn_arch=[400, 300, 200])
+    #agent = PolicyGradientAgent(environment=env, learning_rate=1e-7, decay_rate=0)
     #agent.P = tf.keras.models.load_model(r"C:\Users\Dr Nabil\Downloads\Policy gradient\Pg_final\P_network.h5")
     env.testing = True
     start_time = time.perf_counter()
-    episode_versus_reward = agent.train(1000)
+    episode_versus_reward = agent.train(3000)
     cpu_time = time.perf_counter() - start_time
     agent.P.save("P_network.h5")
     state_arr = np.zeros_like(env.time_list) 
@@ -56,6 +58,7 @@ if __name__ == "__main__":
         y="Jacket Temperature",
         legend="full",
         label="Action",
+        drawstyle='steps-pre'
     )
     
     # concentration plot
