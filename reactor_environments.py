@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May  3 11:35:33 2023
 
-@author: abuth
-"""
 
 import numpy as np
 
@@ -60,7 +55,7 @@ class Environment:
         T = 1
         Ca = 2
         Q = np.array([[1, 0],[0, 1]])
-        R = 0.1
+        R = 0.01
         Tj = action
         new_T = self.curr_state[T, 0] + \
                 dt * (C1 * (self.curr_state[T, 0] - Tj) + \
